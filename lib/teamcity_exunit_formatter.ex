@@ -53,6 +53,10 @@ defmodule TeamCityExUnitFormatter do
     {:ok, config}
   end
 
+  def handle_event(_, config) do
+    {:ok, config}
+  end
+
   defp format(type, attributes) do
     attrs = attributes
             |> Enum.map(&format_attribute/1)
