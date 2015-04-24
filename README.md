@@ -1,5 +1,4 @@
-TeamcityExunitFormatter
+TeamCityExUnitFormatter
 =======================
 
-** TODO: Add description **
-# teamcity-exunit-formatter
+See https://confluence.jetbrains.com/display/TCD9/Build+Script+Interaction+with+TeamCity#BuildScriptInteractionwithTeamCity-ServiceMessages
