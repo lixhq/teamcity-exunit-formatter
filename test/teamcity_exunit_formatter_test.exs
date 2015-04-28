@@ -1,5 +1,5 @@
 defmodule TeamCityExUnitFormatterTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   import ExUnit.CaptureIO
   alias TeamCityExUnitFormatter, as: Sut
