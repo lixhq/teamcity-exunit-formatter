@@ -28,28 +28,28 @@ defmodule TeamCityExUnitFormatter do
     {:ok, config}
   end
 
-  def handle_event({:test_started, %ExUnit.Test{name: name}}, config) do
-    IO.puts format :test_started, name: name
+  def handle_event({:test_started, %ExUnit.Test{name: name, case: the_case}}, config) do
+    IO.puts format :test_started, name: "#{the_case}.#{name}"
     {:ok, config}
   end
 
-  def handle_event({:test_finished, %ExUnit.Test{name: name, time: time, state: {:failed, {_, reason, _} = failed}} = test}, config) do
+  def handle_event({:test_finished, %ExUnit.Test{name: name, case: the_case, time: time, state: {:failed, {_, reason, _} = failed}} = test}, config) do
     formatted = ExUnit.Formatter.format_test_failure(test, failed, config.failures_counter + 1, config.width, &formatter/2)
-    IO.puts format :test_failed, name: name, message: inspect(reason), details: formatted
-    IO.puts format :test_finished, name: name, duration: div(time, 1000)
+    IO.puts format :test_failed, name: "#{the_case}.#{name}", message: inspect(reason), details: formatted
+    IO.puts format :test_finished, name: "#{the_case}.#{name}", duration: div(time, 1000)
     {:ok, %{config | tests_counter: config.tests_counter + 1,
                      failures_counter: config.failures_counter + 1}}
   end
 
-  def handle_event({:test_finished, %ExUnit.Test{name: name, state: {:skip, _}}}, config) do
-    IO.puts format :test_ignored, name: name
-    IO.puts format :test_finished, name: name
+  def handle_event({:test_finished, %ExUnit.Test{name: name, case: the_case, state: {:skip, _}}}, config) do
+    IO.puts format :test_ignored, name: "#{the_case}.#{name}"
+    IO.puts format :test_finished, name: "#{the_case}.#{name}"
     {:ok, %{config | tests_counter: config.tests_counter + 1,
                      skipped_counter: config.skipped_counter + 1}}
   end
 
-  def handle_event({:test_finished, %ExUnit.Test{name: name, time: time}}, config) do
-    IO.puts format :test_finished, name: name, duration: div(time, 1000)
+  def handle_event({:test_finished, %ExUnit.Test{name: name, case: the_case, time: time}}, config) do
+    IO.puts format :test_finished, name: "#{the_case}.#{name}", duration: div(time, 1000)
     {:ok, config}
   end
 
@@ -82,7 +82,8 @@ defmodule TeamCityExUnitFormatter do
       |> String.replace("'", "|'")
       |> String.replace("\n", "|n")
       |> String.replace("\r", "|r")
-      |> String.replace(~r/u([0-9a-f]{4})/i, "|0x\\1")
+      #|> String.replace(~r/u([0-9a-f]{4})/i, "|0x\\1")
+      #|> String.replace(~r/\x{([0-9a-f]{4})}/ui, "|0x\\1")
       |> String.replace("[", "|[")
       |> String.replace("]", "|]")
   end
