@@ -47,6 +47,12 @@ defmodule TeamCityExUnitFormatterTest do
 
   test "format failed test" do
     failure = {:error, catch_error(raise "oops"), []}
+    failure = if Version.match?(System.version, "~> 1.2") do
+      [failure]
+    else
+      failure
+    end
+
     tags = [file: __ENV__.file, line: 1]
     evt = {:test_finished, %ExUnit.Test{name: "test1", tags: tags, case: "testcase1", state: {:failed, failure}}}
     res = capture_io(fn -> Sut.handle_event(evt,config) end)

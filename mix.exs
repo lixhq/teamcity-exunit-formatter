@@ -3,7 +3,7 @@ defmodule TeamcityExunitFormatter.Mixfile do
 
   def project do
     [app: :teamcity_exunit_formatter,
-     version: "0.2.0",
+     version: "0.3.0",
      elixir: "~> 1.1",
      description: "A formatter for Elixirs ExUnit that formats as TeamCity Service Messages. Will let you track test results in TeamCitys UI",
      package: package,
