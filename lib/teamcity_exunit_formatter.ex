@@ -43,7 +43,7 @@ defmodule TeamCityExUnitFormatter do
 
   def handle_event({:test_finished, %ExUnit.Test{name: name, case: the_case, time: time, state: {:failed, failed}} = test}, config) when is_list(failed) do
     formatted = ExUnit.Formatter.format_test_failure(test, failed, config.failures_counter + 1, config.width, &formatter/2)
-    message = Enum.map_join(failed, "", fn {kind, reason, stack} -> inspect(reason) end)
+    message = Enum.map_join(failed, "", fn {_kind, reason, _stack} -> inspect(reason) end)
     IO.puts format :test_failed, name: "#{the_case}.#{name}", message: message, details: formatted
     IO.puts format :test_finished, name: "#{the_case}.#{name}", duration: div(time, 1000)
     {:ok, %{config | tests_counter: config.tests_counter + 1,
