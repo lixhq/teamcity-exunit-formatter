@@ -19,46 +19,47 @@ defmodule TeamCityExUnitFormatter do
   end
 
   def handle_event({:case_started, %ExUnit.TestCase{name: name}}, config) do
-    IO.puts format :test_suite_started, name: name
+    IO.puts format :test_suite_started, name: name, flowId: name
     {:ok, config}
   end
 
   def handle_event({:case_finished, %ExUnit.TestCase{name: name}}, config) do
-    IO.puts format :test_suite_finished, name: name
+    IO.puts format :test_suite_finished, name: name, flowId: name
     {:ok, config}
   end
 
   def handle_event({:test_started, %ExUnit.Test{name: name, case: the_case}}, config) do
-    IO.puts format :test_started, name: "#{the_case}.#{name}"
+    IO.puts format :test_started, name: "#{the_case}.#{name}", flowId: the_case
     {:ok, config}
   end
 
   def handle_event({:test_finished, %ExUnit.Test{name: name, case: the_case, time: time, state: {:failed, {_, reason, _} = failed}} = test}, config) do
     formatted = ExUnit.Formatter.format_test_failure(test, failed, config.failures_counter + 1, config.width, &formatter/2)
-    IO.puts format :test_failed, name: "#{the_case}.#{name}", message: inspect(reason), details: formatted
-    IO.puts format :test_finished, name: "#{the_case}.#{name}", duration: div(time, 1000)
+    IO.puts format :test_failed, name: "#{the_case}.#{name}", message: inspect(reason), details: formatted, flowId: the_case
+    IO.puts format :test_finished, name: "#{the_case}.#{name}", duration: div(time, 1000), flowId: the_case
     {:ok, %{config | tests_counter: config.tests_counter + 1,
                      failures_counter: config.failures_counter + 1}}
   end
 
   def handle_event({:test_finished, %ExUnit.Test{name: name, case: the_case, time: time, state: {:failed, failed}} = test}, config) when is_list(failed) do
     formatted = ExUnit.Formatter.format_test_failure(test, failed, config.failures_counter + 1, config.width, &formatter/2)
+
     message = Enum.map_join(failed, "", fn {_kind, reason, _stack} -> inspect(reason) end)
-    IO.puts format :test_failed, name: "#{the_case}.#{name}", message: message, details: formatted
-    IO.puts format :test_finished, name: "#{the_case}.#{name}", duration: div(time, 1000)
+    IO.puts format :test_failed, name: "#{the_case}.#{name}", message: message, details: formatted, flowId: the_case
+    IO.puts format :test_finished, name: "#{the_case}.#{name}", duration: div(time, 1000), flowId: the_case
     {:ok, %{config | tests_counter: config.tests_counter + 1,
                      failures_counter: config.failures_counter + 1}}
   end
 
   def handle_event({:test_finished, %ExUnit.Test{name: name, case: the_case, state: {:skip, _}}}, config) do
-    IO.puts format :test_ignored, name: "#{the_case}.#{name}"
-    IO.puts format :test_finished, name: "#{the_case}.#{name}"
+    IO.puts format :test_ignored, name: "#{the_case}.#{name}", flowId: the_case
+    IO.puts format :test_finished, name: "#{the_case}.#{name}", flowId: the_case
     {:ok, %{config | tests_counter: config.tests_counter + 1,
                      skipped_counter: config.skipped_counter + 1}}
   end
 
   def handle_event({:test_finished, %ExUnit.Test{name: name, case: the_case, time: time}}, config) do
-    IO.puts format :test_finished, name: "#{the_case}.#{name}", duration: div(time, 1000)
+    IO.puts format :test_finished, name: "#{the_case}.#{name}", duration: div(time, 1000), flowId: the_case
     {:ok, config}
   end
 
