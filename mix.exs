@@ -3,9 +3,9 @@ defmodule TeamcityExunitFormatter.Mixfile do
 
   def project do
     [app: :teamcity_exunit_formatter,
-     version: "0.4.0",
-     elixir: "~> 1.1",
-     description: "A formatter for Elixirs ExUnit that formats as TeamCity Service Messages. Will let you track test results in TeamCitys UI",
+     version: "0.5.0",
+     elixir: "~> 1.5",
+     description: "A formatter for Elixir's ExUnit that formats as TeamCity Service Messages. Will let you track test results in TeamCitys UI",
      package: package(),
      deps: deps()]
   end
