@@ -17,22 +17,22 @@ defmodule TeamCityExUnitFormatterTest do
 
   test "format test case started" do
     evt = {:case_started, %ExUnit.TestCase{name: "testcase1"}}
-    assert_format evt, "##teamcity[testSuiteStarted name='testcase1']"
+    assert_format evt, "##teamcity[testSuiteStarted name='testcase1' flowId='testcase1']"
   end
 
   test "format test case finished" do
     evt = {:case_finished, %ExUnit.TestCase{name: "testcase1"}}
-    assert_format evt, "##teamcity[testSuiteFinished name='testcase1']"
+    assert_format evt, "##teamcity[testSuiteFinished name='testcase1' flowId='testcase1']"
   end
 
   test "format test started" do
     evt = {:test_started, %ExUnit.Test{name: "test1", case: "testcase1"}}
-    assert_format evt, "##teamcity[testStarted name='testcase1.test1']"
+    assert_format evt, "##teamcity[testStarted name='testcase1.test1' flowId='testcase1']"
   end
 
   test "format test finished" do
     evt = {:test_finished, %ExUnit.Test{name: "test1", case: "testcase1", time: 40000}}
-    assert_format evt, "##teamcity[testFinished name='testcase1.test1' duration='40']"
+    assert_format evt, "##teamcity[testFinished name='testcase1.test1' duration='40' flowId='testcase1']"
   end
 
   test "format skipped test" do
@@ -40,8 +40,8 @@ defmodule TeamCityExUnitFormatterTest do
     assert capture_io(fn ->
       Sut.handle_event(evt, config)
     end) == """
-    ##teamcity[testIgnored name='testcase1.test1']
-    ##teamcity[testFinished name='testcase1.test1']
+    ##teamcity[testIgnored name='testcase1.test1' flowId='testcase1']
+    ##teamcity[testFinished name='testcase1.test1' flowId='testcase1']
     """
   end
 
@@ -65,7 +65,7 @@ defmodule TeamCityExUnitFormatterTest do
       "\u1234'" => "\u1234|'", "|" => "||", "[" => "|[", "]" => "|]"}
     Enum.each chars_to_escape, fn {k, v} ->
       evt = {:case_started, %ExUnit.TestCase{name: "Escape#{k} this"}}
-      assert_format evt, "##teamcity[testSuiteStarted name='Escape#{v} this']"
+      assert_format evt, "##teamcity[testSuiteStarted name='Escape#{v} this' flowId='Escape#{v} this']"
     end
   end
 
