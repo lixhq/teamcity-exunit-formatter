@@ -38,7 +38,7 @@ defmodule TeamCityExUnitFormatterTest do
   test "format skipped test" do
     evt = {:test_finished, %ExUnit.Test{name: "test1", case: "testcase1", state: {:skip, ""}}}
     assert capture_io(fn ->
-      Sut.handle_event(evt, config)
+      Sut.handle_event(evt, config())
     end) == """
     ##teamcity[testIgnored name='testcase1.test1' flowId='testcase1']
     ##teamcity[testFinished name='testcase1.test1' flowId='testcase1']
@@ -55,7 +55,7 @@ defmodule TeamCityExUnitFormatterTest do
 
     tags = [file: __ENV__.file, line: 1]
     evt = {:test_finished, %ExUnit.Test{name: "test1", tags: tags, case: "testcase1", state: {:failed, failure}}}
-    res = capture_io(fn -> Sut.handle_event(evt,config) end)
+    res = capture_io(fn -> Sut.handle_event(evt, config()) end)
     assert res =~ "##teamcity[testFailed name='testcase1.test1' message='%RuntimeError{message: \"oops\"}' details='"
   end
 
@@ -71,7 +71,7 @@ defmodule TeamCityExUnitFormatterTest do
 
   defp assert_format(evt, res) do
     assert capture_io(fn ->
-      Sut.handle_event(evt, config)
+      Sut.handle_event(evt, config())
     end) == """
     #{res}
     """
