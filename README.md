@@ -9,7 +9,7 @@ First, add TeamCityExUnitFormatter to your `mix.exs` dependencies:
 
 ```elixir
 def deps do
-  [{:teamcity_exunit_formatter, "~> 0.3.0"}]
+  [{:teamcity_exunit_formatter, "~> 0.4"}]
 end
 ```
 
